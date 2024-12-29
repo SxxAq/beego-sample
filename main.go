@@ -1,8 +1,10 @@
 package main
 
 import (
+	"beego-sample/controllers"
+
 	"github.com/beego/beego/v2/core/logs"
-	"github.com/beego/beego/v2/server/web"
+	beego "github.com/beego/beego/v2/server/web"
 )
 
 func main() {
@@ -11,8 +13,13 @@ func main() {
 	logs.SetLevel(logs.LevelDebug)
 
 	// Register routes
-	web.Router("/", &controllers.MainController{})
-	web.Router("/api/tasks", &controllers.TaskController{})
+	beego.Router("/", &controllers.MainController{})
+	beego.Router("/api/tasks", &controllers.TaskController{})
 
-	web.Run()
+	// Set template path
+	beego.SetViewsPath("views")
+
+	// Run the application
+	logs.Info("Starting Beego application...")
+	beego.Run()
 }

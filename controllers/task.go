@@ -19,6 +19,7 @@ func (c *TaskController) Get() {
 	tasks := []Task{
 		{1, "Learn Beego", "Study the Beego framework", "In Progress"},
 		{2, "Build API", "Create REST endpoints", "Pending"},
+		{3, "Write Documentation", "Document the API endpoints", "Not Started"},
 	}
 	c.Data["json"] = tasks
 	c.ServeJSON()

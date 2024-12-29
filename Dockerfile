@@ -1,27 +1,40 @@
-FROM golang:1.21-alpine
+# Build stage
+FROM golang:1.21-alpine AS builder
 
 WORKDIR /app
 
-# Install required build tools
-RUN apk add --no-cache gcc musl-dev git
-
-# Install Beego and Bee tool
-RUN go install github.com/beego/bee/v2@latest
+# Install git and basic tools
+RUN apk add --no-cache git
 
 # Copy go mod files
 COPY go.mod go.sum ./
 
-# Install dependencies
+# Download dependencies
 RUN go mod download
-RUN go mod tidy
 
 # Copy the rest of the application
 COPY . .
 
-# Create conf directory and copy config
-RUN mkdir -p conf
-COPY conf/app.conf conf/
+# Configure git to trust the directory
+RUN git config --global --add safe.directory /app
+
+# Build the application
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+
+# Final stage
+FROM alpine:latest  
+
+RUN apk --no-cache add ca-certificates
+
+WORKDIR /root/
+
+# Copy the pre-built binary file from the previous stage
+COPY --from=builder /app/main .
+
+# Copy views and conf directories
+COPY --from=builder /app/views ./views
+COPY --from=builder /app/conf ./conf
 
 EXPOSE 8080
 
-CMD ["bee", "run"]
+CMD ["./main"]

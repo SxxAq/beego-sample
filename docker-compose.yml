@@ -1,4 +1,3 @@
-# docker-compose.yml
 version: "3.8"
 services:
   app:
@@ -6,6 +5,8 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - .:/app
+      - ./views:/root/views
+      - ./conf:/root/conf
     environment:
       - ENV=development
+      - BUILDVCS=false  # Disable VCS stamping
