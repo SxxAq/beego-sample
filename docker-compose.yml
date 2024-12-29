@@ -1,12 +1,13 @@
-version: "3.8"
+version: '3.8'
+
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     volumes:
-      - ./views:/root/views
-      - ./conf:/root/conf
+      - .:/app
     environment:
-      - ENV=development
-      - BUILDVCS=false  # Disable VCS stamping
+      - GO_ENV=development
